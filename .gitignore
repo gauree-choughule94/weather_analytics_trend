@@ -1,0 +1,9 @@
+__pycache__/
+.vscode/
+.idea/
+venv/
+.env
+*.env
+*.log
+.cache/
+my_readme.md
