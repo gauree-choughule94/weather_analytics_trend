@@ -2,8 +2,8 @@
 
 USE RawWeatherDB_variousarm;
 
-CREATE TABLE IF NOT EXISTS mumbai_weather (
-  name VARCHAR(100),
+CREATE TABLE IF NOT EXISTS city_weather (
+  name VARCHAR(200),
   datetime DATETIME,
   tempmax FLOAT,
   tempmin FLOAT,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS mumbai_weather (
   precip FLOAT,
   precipprob FLOAT,
   precipcover FLOAT,
-  preciptype VARCHAR(50),
+  preciptype VARCHAR(100),
   snow FLOAT,
   snowdepth FLOAT,
   windgust FLOAT,
@@ -32,9 +32,8 @@ CREATE TABLE IF NOT EXISTS mumbai_weather (
   sunrise TIME,
   sunset TIME,
   moonphase FLOAT,
-  conditions VARCHAR(255),
-  description VARCHAR(255),
-  icon VARCHAR(50),
-  stations VARCHAR(200),
-  PRIMARY KEY (name, datetime)   -- if (name, datetime) is unique
+  conditions VARCHAR(455),
+  description VARCHAR(455),
+  icon VARCHAR(100),
+  stations VARCHAR(500)
 );

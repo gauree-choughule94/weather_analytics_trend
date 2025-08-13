@@ -73,7 +73,7 @@ services:
     volumes:
       - ./infra/pyspark_apps:/opt/infra/pyspark_apps
       - ./data_lake:/opt/data_lake
-      - ./infra/pyspark_apps/jars:/opt/jars
+      - /home/neosoft/Desktop/wheather_analytics_trends/infra/pyspark_apps/jars:/opt/jars
     networks:
       - weather_network
 
@@ -94,7 +94,7 @@ services:
     volumes:
       - ./infra/pyspark_apps:/opt/infra/pyspark_apps
       - ./data_lake:/opt/data_lake
-      - ./infra/pyspark_apps/jars:/opt/jars
+      - /home/neosoft/Desktop/wheather_analytics_trends/infra/pyspark_apps/jars:/opt/jars
     networks:
       - weather_network
 
@@ -108,12 +108,14 @@ services:
       - _AIRFLOW_WWW_USER_USERNAME=admin
       - _AIRFLOW_WWW_USER_PASSWORD=admin
     volumes:
-      - ./airflow_dags:/opt/airflow/dags
+      - ../airflow_dags:/opt/airflow/dags
       - ./airflow_logs:/opt/airflow/logs
       - ./airflow_plugins:/opt/airflow/plugins
       - ./infra/pyspark_apps:/opt/infra/pyspark_apps
-      - ./infra/pyspark_apps/jars:/opt/jars
+      - /home/neosoft/Desktop/wheather_analytics_trends/infra/pyspark_apps/jars:/opt/jars
       - ./data_lake:/opt/data_lake
+      - /home/neosoft/Desktop/wheather_analytics_trends/pyspark_jobs:/opt/infra/pyspark_jobs
+
     command: >
       bash -c "
         pip install requests pandas pyspark pyarrow fastparquet sqlalchemy psycopg2-binary python-dotenv &&
@@ -135,12 +137,13 @@ services:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://weather_user:weather_password@postgres_weather:5432/weather_analytics
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
     volumes:
-      - ./airflow_dags:/opt/airflow/dags
+      - ../airflow_dags:/opt/airflow/dags
       - ./airflow_logs:/opt/airflow/logs
       - ./airflow_plugins:/opt/airflow/plugins
       - ./infra/pyspark_apps:/opt/infra/pyspark_apps
-      - ./infra/pyspark_apps/jars:/opt/jars
+      - /home/neosoft/Desktop/wheather_analytics_trends/infra/pyspark_apps/jars:/opt/jars
       - ./data_lake:/opt/data_lake
+      - /home/neosoft/Desktop/wheather_analytics_trends/pyspark_jobs:/opt/infra/pyspark_jobs
     ports:
       - "8081:8080"
     command: >
@@ -163,12 +166,13 @@ services:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://weather_user:weather_password@postgres_weather:5432/weather_analytics
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
     volumes:
-      - ./airflow_dags:/opt/airflow/dags
+      - ../airflow_dags:/opt/airflow/dags
       - ./airflow_logs:/opt/airflow/logs
       - ./airflow_plugins:/opt/airflow/plugins
       - ./infra/pyspark_apps:/opt/infra/pyspark_apps
-      - ./infra/pyspark_apps/jars:/opt/jars
+      - /home/neosoft/Desktop/wheather_analytics_trends/infra/pyspark_apps/jars:/opt/jars
       - ./data_lake:/opt/data_lake
+      - /home/neosoft/Desktop/wheather_analytics_trends/pyspark_jobs:/opt/infra/pyspark_jobs
     command: >
       bash -c "
         pip install requests pandas pyspark pyarrow fastparquet sqlalchemy psycopg2-binary python-dotenv &&
