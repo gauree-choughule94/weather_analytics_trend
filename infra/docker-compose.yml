@@ -4,27 +4,31 @@ services:
     image: mysql:8.0
     container_name: mysql_weather
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: weather_password
-      MYSQL_DATABASE: mysql_weather_db
-      MYSQL_USER: weatheruser          # used
-      MYSQL_PASSWORD: weatherpassword  # used
+      MYSQL_ROOT_PASSWORD: ${FILESS_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${FILESS_MYSQL_DATABASE}
+      MYSQL_USER: ${FILESS_MYSQL_USER}          # used
+      MYSQL_PASSWORD: ${FILESS_MYSQL_PASSWORD}       # used
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql_init:/docker-entrypoint-initdb.d
     ports:
-      - "3308:3306"
+      - "${FILESS_MYSQL_PORT}:3306"
     networks:
-      - ecommerce_network
+      - weather_network
 
   postgres_weather:
     image: postgres:15
     container_name: postgres_weather
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: weather_user
-      POSTGRES_PASSWORD: weather_password
-      POSTGRES_DB: weather_analytics
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres_init:/docker-entrypoint-initdb.d
@@ -69,6 +73,7 @@ services:
     volumes:
       - ./infra/pyspark_apps:/opt/infra/pyspark_apps
       - ./data_lake:/opt/data_lake
+      - ./infra/pyspark_apps/jars:/opt/jars
     networks:
       - weather_network
 
@@ -89,6 +94,7 @@ services:
     volumes:
       - ./infra/pyspark_apps:/opt/infra/pyspark_apps
       - ./data_lake:/opt/data_lake
+      - ./infra/pyspark_apps/jars:/opt/jars
     networks:
       - weather_network
 
@@ -174,6 +180,7 @@ services:
 volumes:
   postgres_data:
   superset_data:
+  mysql_data:
 
 networks:
   weather_network:

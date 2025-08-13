@@ -1,0 +1,40 @@
+-- USE mysql_weather_db;
+
+USE RawWeatherDB_variousarm;
+
+CREATE TABLE IF NOT EXISTS mumbai_weather (
+  name VARCHAR(100),
+  datetime DATETIME,
+  tempmax FLOAT,
+  tempmin FLOAT,
+  temp FLOAT,
+  feelslikemax FLOAT,
+  feelslikemin FLOAT,
+  feelslike FLOAT,
+  dew FLOAT,
+  humidity FLOAT,
+  precip FLOAT,
+  precipprob FLOAT,
+  precipcover FLOAT,
+  preciptype VARCHAR(50),
+  snow FLOAT,
+  snowdepth FLOAT,
+  windgust FLOAT,
+  windspeed FLOAT,
+  winddir FLOAT,
+  sealevelpressure FLOAT,
+  cloudcover FLOAT,
+  visibility FLOAT,
+  solarradiation FLOAT,
+  solarenergy FLOAT,
+  uvindex FLOAT,
+  severerisk FLOAT,
+  sunrise TIME,
+  sunset TIME,
+  moonphase FLOAT,
+  conditions VARCHAR(255),
+  description VARCHAR(255),
+  icon VARCHAR(50),
+  stations VARCHAR(200),
+  PRIMARY KEY (name, datetime)   -- if (name, datetime) is unique
+);

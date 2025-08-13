@@ -1,0 +1,46 @@
+-- use weather_analytics;
+
+CREATE TABLE IF NOT EXISTS mumbai_weather (
+  name VARCHAR(100),
+  datetime TIMESTAMP,
+  tempmax REAL,
+  tempmin REAL,
+  temp REAL,
+  feelslikemax REAL,
+  feelslikemin REAL,
+  feelslike REAL,
+  dew REAL,
+  humidity REAL,
+  precip REAL,
+  precipprob REAL,
+  precipcover REAL,
+  preciptype VARCHAR(50),
+  snow REAL,
+  snowdepth REAL,
+  windgust REAL,
+  windspeed REAL,
+  winddir REAL,
+  sealevelpressure REAL,
+  cloudcover REAL,
+  visibility REAL,
+  solarradiation REAL,
+  solarenergy REAL,
+  uvindex REAL,
+  severerisk REAL,
+  sunrise TIME,
+  sunset TIME,
+  moonphase REAL,
+  conditions VARCHAR(255),
+  description VARCHAR(255),
+  icon VARCHAR(50),
+  stations VARCHAR(200),
+  PRIMARY KEY (name, datetime)
+);
+
+ALTER TABLE mumbai_weather
+ADD COLUMN avg_temp REAL,
+ADD COLUMN temp_range REAL,
+ADD COLUMN feelslike_diff REAL,
+ADD COLUMN weather_category VARCHAR(50),
+ADD COLUMN day_of_week VARCHAR(10),
+ADD COLUMN daylight_hours REAL;

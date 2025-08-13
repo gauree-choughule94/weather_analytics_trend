@@ -7,3 +7,4 @@ venv/
 *.log
 .cache/
 my_readme.md
+ingest_sql.py
