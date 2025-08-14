@@ -2,10 +2,18 @@ from datetime import timedelta
 import pyspark.sql.functions as F
 import config
 
+# Load city mapping JSON once (outside function so it’s reused for all batches)
+def load_city_mapping(spark):
+    # Adjust path to your JSON file location
+    city_mapping_df = spark.read.json("/home/neosoft/Desktop/wheather_analytics_trends/data_lake/raw/indian_cities.json")
+    # Ensure name column matches exactly the one in weather data
+    return city_mapping_df.select(
+        F.col("name").alias("city_name"),
+        "state", "lat", "lon"
+    )
+
 def fill_missing_with_mode(df):
-    # Drop columns with all nulls
     df = df.drop("sealevelpressure", "snow", "snowdepth", "preciptype")
-    
     for col_name, dtype in df.dtypes:
         mode_value = (
             df.groupBy(col_name)
@@ -14,7 +22,6 @@ def fill_missing_with_mode(df):
               .first()
         )
         if mode_value and mode_value[0] is not None:
-            # Handle timestamp columns
             if dtype == "timestamp":
                 df = df.withColumn(
                     col_name,
@@ -22,14 +29,8 @@ def fill_missing_with_mode(df):
                 )
             else:
                 df = df.fillna({col_name: mode_value[0]})
-        
-        # Round numeric columns to 2 decimal places
         if dtype in ["double", "float", "decimal"]:
             df = df.withColumn(col_name, F.round(F.col(col_name), 2))
-        elif dtype in ["int", "bigint"]:
-            # No rounding needed for pure integers, but can cast if needed
-            pass
-
     return df
 
 def get_date_range(spark):
@@ -52,10 +53,12 @@ def process_batches(spark):
     mysql_url = f"jdbc:mysql://{config.MYSQL_HOST}:{config.MYSQL_PORT}/{config.MYSQL_DATABASE}"
     pg_url = f"jdbc:postgresql://{config.PG_HOST}:{config.PG_PORT}/{config.PG_DATABASE}"
 
+    # Load mapping once
+    city_mapping_df = load_city_mapping(spark)
+
     min_date, max_date = get_date_range(spark)
     total_days = (max_date - min_date).days
     total_batches = (total_days // config.DAYS_PER_BATCH) + 1
-
     print(f"Total days: {total_days}, Total batches: {total_batches}")
 
     for batch_number in range(total_batches):
@@ -83,9 +86,19 @@ def process_batches(spark):
             print(f"Batch {batch_number+1}: No data, skipping.")
             continue
 
-        # Fill missing values, drop null-only cols, round numbers
-        df_cleaned = fill_missing_with_mode(df_batch)
+        # Join with mapping to keep only valid cities & add state/lat/lon
+        df_filtered = df_batch.join(
+            city_mapping_df,
+            df_batch["name"] == city_mapping_df["city_name"],
+            "inner"
+        ).drop("city_name")
 
+        if df_filtered.count() == 0:
+            print(f"Batch {batch_number+1}: No matching cities in mapping, skipping.")
+            continue
+
+        # Clean & transform
+        df_cleaned = fill_missing_with_mode(df_filtered)
         df_transformed = df_cleaned \
             .withColumn("avg_temp", F.round((F.col("tempmax") + F.col("tempmin")) / 2, 2)) \
             .withColumn("temp_range", F.round(F.col("tempmax") - F.col("tempmin"), 2)) \
@@ -100,6 +113,7 @@ def process_batches(spark):
             .withColumn("daylight_hours",
                         F.round((F.unix_timestamp("sunset") - F.unix_timestamp("sunrise")) / 3600, 2))
 
+        # Save to Postgres
         df_transformed.write.format("jdbc") \
             .option("url", pg_url) \
             .option("driver", "org.postgresql.Driver") \

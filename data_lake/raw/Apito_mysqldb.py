@@ -3,8 +3,8 @@ import mysql.connector
 from datetime import datetime
 from dotenv import load_dotenv
 import os
- 
-dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.env"))
+
+dotenv_path= "/home/neosoft/Desktop/wheather_analytics_trends/infra/.env"
 load_dotenv(dotenv_path)
  
 API_KEY = "JED5ML322LAKGZYX23NXP8ALB"

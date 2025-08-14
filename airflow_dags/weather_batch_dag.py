@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 import subprocess
 
 def run_weather_main():
-    script_path = "/home/neosoft/Desktop/wheather_analytics_trends/pyspark_jobs/main.py" 
+    # script_path = "/home/neosoft/Desktop/wheather_analytics_trends/pyspark_jobs/main.py" 
+    script_path = "/opt/infra/pyspark_jobs"
 
     print(f"Running Python script: {script_path}")
     result = subprocess.run(
